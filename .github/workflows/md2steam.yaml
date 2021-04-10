@@ -4,6 +4,9 @@ name: Markdown-to-Steam
 # =================
 
 on:
+  push:
+    paths:
+      - README.md
   workflow_dispatch: # When a workflow event is dispatched manually
 
 # Jobs
