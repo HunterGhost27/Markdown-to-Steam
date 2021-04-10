@@ -47,6 +47,7 @@ export default class Parser {
         let result = ''
         this.replacers.forEach(rx => {
             result = md.replace(rx.regex, rx.replace)
+            console.log(rx.regex, rx.replace, result)
         })
         return result
     }
