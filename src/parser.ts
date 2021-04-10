@@ -1,9 +1,9 @@
-class Parser {
+export default class Parser {
 
     replacers: Map<string, { regex: RegExp, replace: string }>
 
     constructor() {
-        
+
         //  REPLACERS
         //  =========
     

@@ -1,3 +1,5 @@
+import Parser from './parser'
+
 import { core, github, octokit } from './typedefs'
 
 const markdownConverter = async (core: core, octokit: octokit, github: github) => {

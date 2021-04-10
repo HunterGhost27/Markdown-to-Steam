@@ -46,7 +46,7 @@ markdownConverter_1.default(core, octokit, github)
 /***/ }),
 
 /***/ 518:
-/***/ (function(__unused_webpack_module, exports) {
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
@@ -59,9 +59,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+const parser_1 = __importDefault(__nccwpck_require__(358));
 const markdownConverter = (core, octokit, github) => __awaiter(void 0, void 0, void 0, function* () {
-    const parser = new Parser();
+    const parser = new parser_1.default();
     const results = parser.render(`
     # Hello World!
 
@@ -72,6 +76,55 @@ const markdownConverter = (core, octokit, github) => __awaiter(void 0, void 0, v
 //  ============================
 exports.default = markdownConverter;
 //  ============================
+
+
+/***/ }),
+
+/***/ 358:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+class Parser {
+    constructor() {
+        //  REPLACERS
+        //  =========
+        //  RENDER FUNCTION
+        //  ===============
+        this.render = (md) => {
+            let result = '';
+            this.replacers.forEach(rx => {
+                result += md.replace(rx.regex, rx.replace);
+            });
+            return result;
+        };
+        this.replacers = new Map([
+            //  STYLES
+            //  ------
+            ['bold', { regex: /\*\*(.*?)\*\*/g, replace: '[b]$1[/b]' }],
+            ['italic', { regex: /\*(.*?)\*/g, replace: '[i]$1[/i]' }],
+            ['underline', { regex: /\_(.*?)\_/g, replace: '[u]$1[/u]' }],
+            ['strike', { regex: /\~(.*?)\~/g, replace: '[strike]$1[/strike]' }],
+            ['spoiler', { regex: /~~((.|\n)*?)~~/g, replace: '[spoiler]$1[/spoiler]' }],
+            //  SPECIAL TYPES
+            //  -------------
+            ['link', { regex: /\[([^\[]+)\]\(([^\)]+)\)/g, replace: '[url=$2]$1[/url]' }],
+            ['code', { regex: /`((.|\n)*?)`/g, replace: '[code]$1[/code]' }],
+            ['quote', { regex: /(\n|^)\>[ ](.*)/g, replace: '$1[quote]$2[/quote]' }],
+            //  LISTS
+            //  -----
+            ['ordered-list', { regex: /(\n|^)[ ]*[0-9]+\.[ ](.*)/g, replace: '$1[olist]\n[*]$2\n[/olist]' }],
+            ['unordered-list', { regex: /(\n|^)[ ]*[\*\-\+][ ](.*)/g, replace: '$1[ulist]\n[*]$2\n[/ulist]' }],
+            //  HEADERS
+            //  -------
+            ['header1', { regex: /(\n|^)(#{1})[ ](.*)/g, replace: '[h1]$1[/h1]' }],
+            ['header2', { regex: /(\n|^)(##{1})[ ](.*)/g, replace: '[h2]$1[/h2]' }],
+            ['header3', { regex: /(\n|^)(###{1})[ ](.*)/g, replace: '[h3]$1[/h3]' }],
+        ]);
+    }
+}
+exports.default = Parser;
 
 
 /***/ }),
