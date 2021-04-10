@@ -93,10 +93,9 @@ class Parser {
         //  RENDER FUNCTION
         //  ===============
         this.render = (md) => {
-            let result = '';
+            let result = md;
             this.replacers.forEach(rx => {
-                result = md.replace(rx.regex, rx.replace);
-                console.log(rx.regex, rx.replace, result);
+                result = result.replace(rx.regex, rx.replace);
             });
             return result;
         };

@@ -44,10 +44,9 @@ export default class Parser {
     //  ===============
 
     render = (md: string) => {
-        let result = ''
+        let result = md
         this.replacers.forEach(rx => {
-            result = md.replace(rx.regex, rx.replace)
-            console.log(rx.regex, rx.replace, result)
+            result = result.replace(rx.regex, rx.replace)
         })
         return result
     }
