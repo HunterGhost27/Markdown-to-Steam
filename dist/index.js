@@ -95,7 +95,7 @@ class Parser {
         this.render = (md) => {
             let result = '';
             this.replacers.forEach(rx => {
-                result += md.replace(rx.regex, rx.replace);
+                result = md.replace(rx.regex, rx.replace);
             });
             return result;
         };
