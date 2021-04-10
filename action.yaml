@@ -1,0 +1,21 @@
+# =================
+# Markdown-to-Steam
+# =================
+
+name: Markdown-to-Steam
+author: Shresht7
+description: GitHub Action to convert markdown files to steam bb code
+
+# branding:
+
+# Inputs
+# ======
+
+inputs:
+
+# Run
+# ===
+
+runs:
+  using: "node12"
+  main: "dist/index.js"

@@ -1,0 +1,29 @@
+{
+  "name": "markdown-to-steam",
+  "version": "1.0.0",
+  "description": "GitHub Action to convert markdown files into Steam BB code",
+  "main": "index.js",
+  "scripts": {
+    "tsc": "tsc",
+    "package": "ncc build ./build/index.js --license licenses.txt",
+    "build": "npm run tsc && npm run package"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HunterGhost27/Markdown-to-Steam.git"
+  },
+  "author": "Shresht7",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HunterGhost27/Markdown-to-Steam/issues"
+  },
+  "homepage": "https://github.com/HunterGhost27/Markdown-to-Steam#readme",
+  "devDependencies": {
+    "@types/node": "^14.14.37",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@actions/github": "^4.0.0"
+  }
+}
