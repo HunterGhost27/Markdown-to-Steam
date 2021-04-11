@@ -13,7 +13,7 @@ description: GitHub Action to convert markdown files to steam bb code
 
 inputs:
   files:
-    description: "The comma separated list of files to convert"
+    description: "The file to convert"
     default: "README.md"
 
   outDir:

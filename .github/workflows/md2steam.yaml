@@ -37,8 +37,8 @@ jobs:
         # -----------------
 
         with:
-          # The list of files to convert
-          files: "README.md, CHANGELOG.md"
+          # The file to change
+          files: "README.md"
 
           # Target directory
           outDir: "Documentation"

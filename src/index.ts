@@ -4,7 +4,7 @@ import * as github from '@actions/github'
 
 import markdownConverter from './markdownConverter'
 
-const files = core.getInput('files').split(/,\s+?/g)    //  Parse comma separated list of files as array
+const file = core.getInput('file')  //  The File to parse
 const outDir = core.getInput('outDir')  //  Output directory
 
 //  =======
@@ -17,6 +17,6 @@ const GITHUB_ACCESS_TOKEN = process.env.GITHUB_TOKEN || ''
 const octokit = github.getOctokit(GITHUB_ACCESS_TOKEN)
 
 //  Convert files and push changes to output directory
-markdownConverter(files, outDir, core, octokit, github)
-    .then(() => core.info(`Successfully converted ${files.join(', ')} into steam-workshop bb code`))
+markdownConverter(file, outDir, core, octokit, github)
+    .then(() => core.info(`Successfully converted ${file} into steam-workshop bb code`))
     .catch((err: Error) => core.setFailed(err))

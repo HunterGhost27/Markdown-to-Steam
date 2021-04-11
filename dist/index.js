@@ -33,7 +33,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(21));
 const github = __importStar(__nccwpck_require__(366));
 const markdownConverter_1 = __importDefault(__nccwpck_require__(518));
-const files = core.getInput('files').split(/,\s+?/g); //  Parse comma separated list of files as array
+const file = core.getInput('file'); //  The File to parse
 const outDir = core.getInput('outDir'); //  Output directory
 //  =======
 //  OCTOKIT
@@ -43,8 +43,8 @@ const GITHUB_ACCESS_TOKEN = process.env.GITHUB_TOKEN || '';
 !GITHUB_ACCESS_TOKEN && core.setFailed(`Invalid GITHUB_ACCESS_TOKEN`);
 const octokit = github.getOctokit(GITHUB_ACCESS_TOKEN);
 //  Convert files and push changes to output directory
-markdownConverter_1.default(files, outDir, core, octokit, github)
-    .then(() => core.info(`Successfully converted ${files.join(', ')} into steam-workshop bb code`))
+markdownConverter_1.default(file, outDir, core, octokit, github)
+    .then(() => core.info(`Successfully converted ${file} into steam-workshop bb code`))
     .catch((err) => core.setFailed(err));
 
 
@@ -92,14 +92,7 @@ const js_base64_1 = __nccwpck_require__(925);
 const parser_1 = __importDefault(__nccwpck_require__(358));
 const parser = new parser_1.default();
 //  Converts files from markdown into steam bb code and pushes the changes to outDir directory
-const markdownConverter = (files, outDir, core, octokit, github) => __awaiter(void 0, void 0, void 0, function* () {
-    if (files.length === 0) {
-        return;
-    }
-    const file = files.shift();
-    if (!file) {
-        return;
-    }
+const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(void 0, void 0, void 0, function* () {
     //  Get Markdown contents
     try {
         const { data } = yield octokit.repos.getContent({
@@ -129,9 +122,8 @@ const markdownConverter = (files, outDir, core, octokit, github) => __awaiter(vo
         });
     }
     catch (err) {
-        console.error(err);
+        core.error(err);
     }
-    yield markdownConverter(files, outDir, core, octokit, github);
 });
 //  ============================
 exports.default = markdownConverter;

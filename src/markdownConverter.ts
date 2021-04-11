@@ -7,12 +7,7 @@ import { core, github, octokit } from './typedefs'
 const parser = new Parser()
 
 //  Converts files from markdown into steam bb code and pushes the changes to outDir directory
-const markdownConverter = async (files: string[], outDir: string, core: core, octokit: octokit, github: github) => {
-    if (files.length === 0) { return }
-
-    const file = files.shift()
-    if (!file) { return }
-
+const markdownConverter = async (file: string, outDir: string, core: core, octokit: octokit, github: github) => {
     //  Get Markdown contents
     try{
         const { data }  = await octokit.repos.getContent({
@@ -42,10 +37,8 @@ const markdownConverter = async (files: string[], outDir: string, core: core, oc
             content: Base64.encode(results)
         })
     } catch (err) {
-        console.error(err)
+        core.error(err)
     }
-
-    await markdownConverter(files, outDir, core, octokit, github)
 }
 
 //  ============================
