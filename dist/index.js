@@ -112,7 +112,7 @@ const markdownConverter = (files, outDir, core, octokit, github) => __awaiter(vo
             }
             const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt');
             core.info(`Updating ${filePath}`);
-            yield octokit.repos.createOrUpdateFileContents({
+            const response = yield octokit.repos.createOrUpdateFileContents({
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
                 path: filePath,
@@ -121,6 +121,7 @@ const markdownConverter = (files, outDir, core, octokit, github) => __awaiter(vo
                 message: 'Update Steam Workshop BB Content',
                 content: js_base64_1.Base64.encode(results)
             });
+            console.log(response);
         }
         catch (err) {
             core.error(err);
