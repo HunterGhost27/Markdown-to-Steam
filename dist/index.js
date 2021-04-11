@@ -103,7 +103,7 @@ const markdownConverter = (files, outDir, core, octokit, github) => __awaiter(vo
         if (!content) {
             return;
         } //Base64 decode and do stuff with content
-        const results = parser.render(content);
+        const results = parser.render(Buffer.from(content).toString('utf8'));
         const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt');
         core.info(`Updating ${filePath} with: \n${results}`);
         // await octokit.repos.createOrUpdateFileContents({
