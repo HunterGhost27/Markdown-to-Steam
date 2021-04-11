@@ -4,6 +4,7 @@ name: Markdown-to-Steam
 # =================
 
 on:
+  # When README.md is updated
   push:
     paths:
       - README.md

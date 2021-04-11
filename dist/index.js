@@ -29,19 +29,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+//  GitHub Actions Toolkit
 const core = __importStar(__nccwpck_require__(21));
 const github = __importStar(__nccwpck_require__(366));
 const markdownConverter_1 = __importDefault(__nccwpck_require__(518));
-const files = core.getInput('files').split(', ');
-const outDir = core.getInput('outDir');
+const files = core.getInput('files').split(/,\s+?/g); //  Parse comma separated list of files as array
+const outDir = core.getInput('outDir'); //  Output directory
 //  =======
 //  OCTOKIT
 //  =======
+//  Setup octokit client
 const GITHUB_ACCESS_TOKEN = process.env.GITHUB_TOKEN || '';
 !GITHUB_ACCESS_TOKEN && core.setFailed(`Invalid GITHUB_ACCESS_TOKEN`);
 const octokit = github.getOctokit(GITHUB_ACCESS_TOKEN);
+//  Convert files and push changes to output directory
 markdownConverter_1.default(files, outDir, core, octokit, github)
-    .then(() => core.info('Successfully converted README.md into steam-workshop bb code'))
+    .then(() => core.info(`Successfully converted ${files.join(', ')} into steam-workshop bb code`))
     .catch((err) => core.setFailed(err));
 
 
@@ -86,18 +89,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const path = __importStar(__nccwpck_require__(622));
 const parser_1 = __importDefault(__nccwpck_require__(358));
+//  Converts files from markdown into steam bb code and pushes the changes to outDir directory
 const markdownConverter = (files, outDir, core, octokit, github) => __awaiter(void 0, void 0, void 0, function* () {
     const parser = new parser_1.default();
-    files.forEach(file => {
-        const filePath = path.join(outDir, file);
-        core.info(`file-path: ${filePath}`);
-    });
-    const results = parser.render(`
-    # Hello World!
-
-    This is a **Markdown File** that will be *converted* to _steam BB code_.
-    `);
-    core.info(results);
+    files.forEach((file) => __awaiter(void 0, void 0, void 0, function* () {
+        //  Get Markdown contents
+        const { data } = yield octokit.repos.getContent({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            path: file
+        });
+        const { content, sha } = Object.assign({}, data);
+        if (!content) {
+            return;
+        } //Base64 decode and do stuff with content
+        const results = parser.render(content);
+        const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt');
+        core.info(`Updating ${filePath} with: \n${results}`);
+        // await octokit.repos.createOrUpdateFileContents({
+        //     owner: github.context.repo.owner,
+        //     repo: github.context.repo.repo,
+        //     path: filePath,
+        //     sha,
+        //     message: 'Update Steam Workshop BB Content',
+        //     content: results
+        // })
+    }));
 });
 //  ============================
 exports.default = markdownConverter;
