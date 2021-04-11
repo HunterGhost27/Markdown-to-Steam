@@ -1,3 +1,3 @@
 # Markdown-to-Steam
 
-GitHub Action to parse markdown files into Steam BB code
+GitHub Action to automatically parse README.md into Steam BB code text file.

@@ -1,3 +1,9 @@
+# =================
+# MARKDOWN-TO-STEAM
+# =================
+
+# This workflow parses the repo's README.md file and creates/updates a text file for the steam workshop description
+
 name: Markdown-to-Steam
 
 # Activation Events
@@ -8,7 +14,9 @@ on:
   push:
     paths:
       - README.md
-  workflow_dispatch: # When a workflow event is dispatched manually
+
+  # When a workflow event is dispatched manually
+  workflow_dispatch:
 
 # Jobs
 # ====
@@ -38,10 +46,10 @@ jobs:
 
         with:
           # The file to change
-          files: "README.md"
+          file: "README.md"
 
           # Target directory
-          outDir: "Documentation"
+          outDir: "."
 
         # Environment Variables
         # ---------------------
