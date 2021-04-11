@@ -23,6 +23,8 @@ const markdownConverter = async (files: string[], outDir: string, core: core, oc
             const content = Base64.decode(baseContent)
             const results = parser.render(content)
     
+            if (content === results) { return }
+
             const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt')
     
             core.info(`Updating ${filePath}`)
