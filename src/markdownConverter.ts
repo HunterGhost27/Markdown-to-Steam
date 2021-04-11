@@ -1,9 +1,15 @@
+import * as path from 'path'
 import Parser from './parser'
 
 import { core, github, octokit } from './typedefs'
 
-const markdownConverter = async (core: core, octokit: octokit, github: github) => {
+const markdownConverter = async (files: string[], outDir: string, core: core, octokit: octokit, github: github) => {
     const parser = new Parser()
+
+    files.forEach(file => {
+        const filePath = path.join(outDir, file)
+        core.info(`file-path: ${filePath}`)
+    })
 
     const results = parser.render(`
     # Hello World!

@@ -35,6 +35,13 @@ jobs:
         # Config Parameters
         # -----------------
 
+        with:
+          # The list of files to convert
+          files: "README.md, CHANGELOG.md"
+
+          # Target directory
+          outDir: "Documentation"
+
         # Environment Variables
         # ---------------------
 

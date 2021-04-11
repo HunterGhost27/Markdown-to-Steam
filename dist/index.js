@@ -32,13 +32,15 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(21));
 const github = __importStar(__nccwpck_require__(366));
 const markdownConverter_1 = __importDefault(__nccwpck_require__(518));
+const files = core.getInput('files').split(', ');
+const outDir = core.getInput('outDir');
 //  =======
 //  OCTOKIT
 //  =======
 const GITHUB_ACCESS_TOKEN = process.env.GITHUB_TOKEN || '';
 !GITHUB_ACCESS_TOKEN && core.setFailed(`Invalid GITHUB_ACCESS_TOKEN`);
 const octokit = github.getOctokit(GITHUB_ACCESS_TOKEN);
-markdownConverter_1.default(core, octokit, github)
+markdownConverter_1.default(files, outDir, core, octokit, github)
     .then(() => core.info('Successfully converted README.md into steam-workshop bb code'))
     .catch((err) => core.setFailed(err));
 
@@ -50,6 +52,25 @@ markdownConverter_1.default(core, octokit, github)
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -63,9 +84,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+const path = __importStar(__nccwpck_require__(622));
 const parser_1 = __importDefault(__nccwpck_require__(358));
-const markdownConverter = (core, octokit, github) => __awaiter(void 0, void 0, void 0, function* () {
+const markdownConverter = (files, outDir, core, octokit, github) => __awaiter(void 0, void 0, void 0, function* () {
     const parser = new parser_1.default();
+    files.forEach(file => {
+        const filePath = path.join(outDir, file);
+        core.info(`file-path: ${filePath}`);
+    });
     const results = parser.render(`
     # Hello World!
 
