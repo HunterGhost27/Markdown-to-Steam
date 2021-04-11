@@ -1,4 +1,5 @@
 import * as path from 'path'
+import { Base64 } from 'js-base64'
 import Parser from './parser'
 
 import { core, github, octokit } from './typedefs'
@@ -18,7 +19,7 @@ const markdownConverter = async (files: string[], outDir: string, core: core, oc
         const { content: baseContent, sha } = { ...data }
         if (!baseContent) { return } //Base64 decode and do stuff with content
         
-        const content = Buffer.from(baseContent).toString('utf8')
+        const content = Base64.decode(baseContent)
         const results = parser.render(content)
         core.info(baseContent + " " +  content + " " +  results)
 
