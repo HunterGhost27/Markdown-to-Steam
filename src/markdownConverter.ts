@@ -37,10 +37,8 @@ const markdownConverter = async (files: string[], outDir: string, core: core, oc
                 message: 'Update Steam Workshop BB Content',
                 content: Base64.encode(results)
             })
-            console.log(response)
-
         } catch (err) {
-            core.error(err)
+            console.error(err)
         }
     })
 }

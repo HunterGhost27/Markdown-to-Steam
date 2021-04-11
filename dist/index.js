@@ -121,10 +121,9 @@ const markdownConverter = (files, outDir, core, octokit, github) => __awaiter(vo
                 message: 'Update Steam Workshop BB Content',
                 content: js_base64_1.Base64.encode(results)
             });
-            console.log(response);
         }
         catch (err) {
-            core.error(err);
+            console.error(err);
         }
     }));
 });
