@@ -8,32 +8,36 @@ import { core, github, octokit } from './typedefs'
 const markdownConverter = async (files: string[], outDir: string, core: core, octokit: octokit, github: github) => {
     const parser = new Parser()
 
-    files.forEach(async file => {
-        //  Get Markdown contents
-        const { data }  = await octokit.repos.getContent({
-            owner: github.context.repo.owner,
-            repo: github.context.repo.repo,
-            path: file
+    try {
+        files.forEach(async file => {
+            //  Get Markdown contents
+            const { data }  = await octokit.repos.getContent({
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                path: file
+            })
+
+            const { content: baseContent, sha } = { ...data }
+            if (!baseContent) { return } //Base64 decode and do stuff with content
+            
+            const content = Base64.decode(baseContent)
+            const results = parser.render(content)
+
+            const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt')
+
+            core.info(`Updating ${filePath}`)
+            await octokit.repos.createOrUpdateFileContents({
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                path: filePath,
+                sha,
+                message: 'Update Steam Workshop BB Content',
+                content: Base64.encode(results)
+            })
         })
-
-        const { content: baseContent, sha } = { ...data }
-        if (!baseContent) { return } //Base64 decode and do stuff with content
-        
-        const content = Base64.decode(baseContent)
-        const results = parser.render(content)
-
-        const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt')
-
-        core.info(`Updating ${filePath}`)
-        await octokit.repos.createOrUpdateFileContents({
-            owner: github.context.repo.owner,
-            repo: github.context.repo.repo,
-            path: filePath,
-            sha,
-            message: 'Update Steam Workshop BB Content',
-            content: Base64.encode(results)
-        })
-    })
+    } catch (err) {
+        core.error(err)
+    }
 }
 
 //  ============================
