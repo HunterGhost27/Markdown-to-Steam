@@ -8,23 +8,23 @@ import { core, github, octokit } from './typedefs'
 const markdownConverter = async (files: string[], outDir: string, core: core, octokit: octokit, github: github) => {
     const parser = new Parser()
 
-    try {
-        files.forEach(async file => {
-            //  Get Markdown contents
+    files.forEach(async file => {
+        //  Get Markdown contents
+        try{
             const { data }  = await octokit.repos.getContent({
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
                 path: file
             })
-
+    
             const { content: baseContent, sha } = { ...data }
             if (!baseContent) { return } //Base64 decode and do stuff with content
             
             const content = Base64.decode(baseContent)
             const results = parser.render(content)
-
+    
             const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt')
-
+    
             core.info(`Updating ${filePath}`)
             await octokit.repos.createOrUpdateFileContents({
                 owner: github.context.repo.owner,
@@ -34,10 +34,10 @@ const markdownConverter = async (files: string[], outDir: string, core: core, oc
                 message: 'Update Steam Workshop BB Content',
                 content: Base64.encode(results)
             })
-        })
-    } catch (err) {
-        core.error(err)
-    }
+        } catch (err) {
+            core.error(err)
+        }
+    })
 }
 
 //  ============================

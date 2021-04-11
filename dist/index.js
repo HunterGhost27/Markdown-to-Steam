@@ -93,9 +93,9 @@ const parser_1 = __importDefault(__nccwpck_require__(358));
 //  Converts files from markdown into steam bb code and pushes the changes to outDir directory
 const markdownConverter = (files, outDir, core, octokit, github) => __awaiter(void 0, void 0, void 0, function* () {
     const parser = new parser_1.default();
-    try {
-        files.forEach((file) => __awaiter(void 0, void 0, void 0, function* () {
-            //  Get Markdown contents
+    files.forEach((file) => __awaiter(void 0, void 0, void 0, function* () {
+        //  Get Markdown contents
+        try {
             const { data } = yield octokit.repos.getContent({
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
@@ -117,11 +117,11 @@ const markdownConverter = (files, outDir, core, octokit, github) => __awaiter(vo
                 message: 'Update Steam Workshop BB Content',
                 content: js_base64_1.Base64.encode(results)
             });
-        }));
-    }
-    catch (err) {
-        core.error(err);
-    }
+        }
+        catch (err) {
+            core.error(err);
+        }
+    }));
 });
 //  ============================
 exports.default = markdownConverter;
