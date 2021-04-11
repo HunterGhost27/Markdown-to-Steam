@@ -90,42 +90,48 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const path = __importStar(__nccwpck_require__(622));
 const js_base64_1 = __nccwpck_require__(925);
 const parser_1 = __importDefault(__nccwpck_require__(358));
+const parser = new parser_1.default();
 //  Converts files from markdown into steam bb code and pushes the changes to outDir directory
 const markdownConverter = (files, outDir, core, octokit, github) => __awaiter(void 0, void 0, void 0, function* () {
-    const parser = new parser_1.default();
-    files.forEach((file) => __awaiter(void 0, void 0, void 0, function* () {
-        //  Get Markdown contents
-        try {
-            const { data } = yield octokit.repos.getContent({
-                owner: github.context.repo.owner,
-                repo: github.context.repo.repo,
-                path: file
-            });
-            const { content: baseContent, sha } = Object.assign({}, data);
-            if (!baseContent) {
-                return;
-            } //Base64 decode and do stuff with content
-            const content = js_base64_1.Base64.decode(baseContent);
-            const results = parser.render(content);
-            if (content.trim() == results.trim()) {
-                return;
-            }
-            const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt');
-            core.info(`Updating ${filePath}`);
-            const response = yield octokit.repos.createOrUpdateFileContents({
-                owner: github.context.repo.owner,
-                repo: github.context.repo.repo,
-                path: filePath,
-                branch: 'main',
-                sha,
-                message: 'Update Steam Workshop BB Content',
-                content: js_base64_1.Base64.encode(results)
-            });
+    if (files.length === 0) {
+        return;
+    }
+    const file = files.shift();
+    if (!file) {
+        return;
+    }
+    //  Get Markdown contents
+    try {
+        const { data } = yield octokit.repos.getContent({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            path: file
+        });
+        const { content: baseContent, sha } = Object.assign({}, data);
+        if (!baseContent) {
+            return;
+        } //Base64 decode and do stuff with content
+        const content = js_base64_1.Base64.decode(baseContent);
+        const results = parser.render(content);
+        if (content.trim() == results.trim()) {
+            return;
         }
-        catch (err) {
-            console.error(err);
-        }
-    }));
+        const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt');
+        core.info(`Updating ${filePath}`);
+        yield octokit.repos.createOrUpdateFileContents({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            path: filePath,
+            branch: 'main',
+            sha,
+            message: 'Update Steam Workshop BB Content',
+            content: js_base64_1.Base64.encode(results)
+        });
+    }
+    catch (err) {
+        console.error(err);
+    }
+    yield markdownConverter(files, outDir, core, octokit, github);
 });
 //  ============================
 exports.default = markdownConverter;
