@@ -99,13 +99,15 @@ const markdownConverter = (files, outDir, core, octokit, github) => __awaiter(vo
             repo: github.context.repo.repo,
             path: file
         });
-        const { content, sha } = Object.assign({}, data);
-        if (!content) {
+        const { content: baseContent, sha } = Object.assign({}, data);
+        if (!baseContent) {
             return;
         } //Base64 decode and do stuff with content
-        const results = parser.render(Buffer.from(content).toString('utf8'));
+        const content = Buffer.from(baseContent).toString('utf8');
+        const results = parser.render(content);
+        core.info(baseContent + " " + content + " " + results);
         const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt');
-        core.info(`Updating ${filePath} with: \n${results}`);
+        core.info(`Updating ${filePath}`);
         // await octokit.repos.createOrUpdateFileContents({
         //     owner: github.context.repo.owner,
         //     repo: github.context.repo.repo,

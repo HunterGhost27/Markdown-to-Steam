@@ -15,13 +15,15 @@ const markdownConverter = async (files: string[], outDir: string, core: core, oc
             path: file
         })
 
-        const { content, sha } = { ...data }
-        if (!content) { return } //Base64 decode and do stuff with content
+        const { content: baseContent, sha } = { ...data }
+        if (!baseContent) { return } //Base64 decode and do stuff with content
         
-        const results = parser.render(Buffer.from(content).toString('utf8'))
+        const content = Buffer.from(baseContent).toString('utf8')
+        const results = parser.render(content)
+        core.info(baseContent + " " +  content + " " +  results)
 
         const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt')
-        core.info(`Updating ${filePath} with: \n${results}`)
+        core.info(`Updating ${filePath}`)
         // await octokit.repos.createOrUpdateFileContents({
         //     owner: github.context.repo.owner,
         //     repo: github.context.repo.repo,
