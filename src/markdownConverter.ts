@@ -21,18 +21,18 @@ const markdownConverter = async (files: string[], outDir: string, core: core, oc
         
         const content = Base64.decode(baseContent)
         const results = parser.render(content)
-        core.info(baseContent + " " +  content + " " +  results)
 
         const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt')
+
         core.info(`Updating ${filePath}`)
-        // await octokit.repos.createOrUpdateFileContents({
-        //     owner: github.context.repo.owner,
-        //     repo: github.context.repo.repo,
-        //     path: filePath,
-        //     sha,
-        //     message: 'Update Steam Workshop BB Content',
-        //     content: results
-        // })
+        await octokit.repos.createOrUpdateFileContents({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            path: filePath,
+            sha,
+            message: 'Update Steam Workshop BB Content',
+            content: Base64.encode(results)
+        })
     })
 }
 

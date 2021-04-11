@@ -106,17 +106,16 @@ const markdownConverter = (files, outDir, core, octokit, github) => __awaiter(vo
         } //Base64 decode and do stuff with content
         const content = js_base64_1.Base64.decode(baseContent);
         const results = parser.render(content);
-        core.info(baseContent + " " + content + " " + results);
         const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt');
         core.info(`Updating ${filePath}`);
-        // await octokit.repos.createOrUpdateFileContents({
-        //     owner: github.context.repo.owner,
-        //     repo: github.context.repo.repo,
-        //     path: filePath,
-        //     sha,
-        //     message: 'Update Steam Workshop BB Content',
-        //     content: results
-        // })
+        yield octokit.repos.createOrUpdateFileContents({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            path: filePath,
+            sha,
+            message: 'Update Steam Workshop BB Content',
+            content: js_base64_1.Base64.encode(results)
+        });
     }));
 });
 //  ============================
