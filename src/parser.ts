@@ -18,7 +18,7 @@ export default class Parser {
             ['bold-&-italic',       { regex: /\*{3}(.*?)\*{3}/gm,                       replace: '[b][i]$1[/i][/b]'             }],
 
             //                      **_Every-thing in between_**                        [b][i]Every-thing in between[/i][/b]
-            ['bold-&-italic',       { regex: /\*{2}\_(.*?)\_\*{2}/gm,                   replace: '[b][i]$1[/i][/b]'             }],
+            ['alt-bold-&-italic',   { regex: /\*{2}\_(.*?)\_\*{2}/gm,                   replace: '[b][i]$1[/i][/b]'             }],
 
             //                      **Every-thing in between**                          [b]Every-thing in between[/b]
             ['bold',                { regex: /\*{2}(.*?)\*{2}/gm,                       replace: '[b]$1[/b]'                    }],
@@ -27,7 +27,7 @@ export default class Parser {
             ['italic',              { regex: /\*{1}(.*?)\*{1}/gm,                       replace: '[i]$1[/i]'                    }],
 
             //                      __Every-thing in between__                          [u]Every-thing in between[/u]
-            ['underline',          { regex: /\_{2}(.*?)\_{2}/gm,                        replace: '[u]$1[/u]'                    }],
+            ['underline',           { regex: /\_{2}(.*?)\_{2}/gm,                        replace: '[u]$1[/u]'                    }],
 
             //                      _Every-thing in between_                            [i]Every-thing in between[/i]
             ['alt-italic',          { regex: /\_(.*?)\_/gm,                             replace: '[i]$1[/i]'                    }],
@@ -36,7 +36,7 @@ export default class Parser {
             ['strike',              { regex: /\~~(.*?)\~~/gm,                           replace: '[strike]$1[/strike]'          }],
 
             //                      ||Every-thing in between||                          [spoiler]Every-thing in between[/spoiler]
-            ['spoiler',             { regex: /||((.|\n)*?)||/gm,                        replace: '[spoiler]$1[/spoiler]'        }],
+            ['spoiler',             { regex: /\|\|((.|\n)*?)\|\|/gm,                    replace: '[spoiler]$1[/spoiler]'        }],
             
             //  SPECIAL TYPES
             //  -------------
@@ -57,12 +57,12 @@ export default class Parser {
             //  -----
             
             //  Needs more work
-            ['ordered-list-start',  { regex: /^[\s]*[1]\.[\s]*(.*)/gm,                  replace: '[olist]\n[*]$1'               }],
-            ['ordered-list',        { regex: /^[\s]*[2-9]+\.[\s]*(.*)/gm,               replace: '[*]$1'                        }],
-            // ['ordered-list-end',    { regex: /^[\s]+[2-9]+\.[\s]+(.*)/gm,               replace: '[*]$1'                     }],
+            // ['ordered-list-start',  { regex: /^[\s]*[1]\.[\s]*(.*)/gm,                  replace: '[olist]\n[*]$1'               }],
+            // ['ordered-list',        { regex: /^[\s]*[2-9]+\.[\s]*(.*)/gm,               replace: '[*]$1'                        }],
+            // ['ordered-list-end',    { regex: /^[\s]+[2-9]+\.[\s]+(.*)/gm,               replace: '[*]$1'                        }],
             
             //  Needs more work
-            ['list',                { regex: /^[\s]*[\*\-\+][\s]*(.*)/gm,                replace: '[list]\n[*]$1'               }],
+            // ['list',                { regex: /^[\s]*[\*\-\+][\s]*(.*)/gm,                replace: '[list]\n[*]$1'               }],
             
             //  HEADERS
             //  -------
@@ -83,9 +83,7 @@ export default class Parser {
 
     render = (md: string) => {
         let result = md
-        this.replacers.forEach(rx => {
-            result = result.replace(rx.regex, rx.replace)
-        })
+        this.replacers.forEach(rx => { result = result.replace(rx.regex, rx.replace) })
         result = result.trim()
         return result
     }
