@@ -25,19 +25,21 @@ const markdownConverter = async (file: string, outDir: string, core: core, octok
     const content = Base64.decode(baseContent)
     const results = parser.render(content)
     
-    core.info(content)
-
     if (content.trim() == results.trim()) { return }    //  If there is no change required then return
 
     //  Get txt file's SHA if it exists
-    file = `${fileName}.txt`    
-    const { data: txtData }  = await octokit.repos.getContent({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        path: file
-    })
-    //  Get SHA (if any)
-    const { sha } = { ...txtData }
+    let sha
+    try {
+        const { data: txtData }  = await octokit.repos.getContent({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            path: `${outDir}/${fileName}.txt`
+        })
+        //  Get SHA (if any)
+        sha = { ...txtData }.sha
+    } catch (err) {
+        sha = undefined
+    }
 
     console.log(sha)
 

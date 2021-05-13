@@ -110,19 +110,23 @@ const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(voi
     //  Decode and parse
     const content = js_base64_1.Base64.decode(baseContent);
     const results = parser.render(content);
-    core.info(content);
     if (content.trim() == results.trim()) {
         return;
     } //  If there is no change required then return
     //  Get txt file's SHA if it exists
-    file = `${fileName}.txt`;
-    const { data: txtData } = yield octokit.repos.getContent({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        path: file
-    });
-    //  Get SHA (if any)
-    const { sha } = Object.assign({}, txtData);
+    let sha;
+    try {
+        const { data: txtData } = yield octokit.repos.getContent({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            path: `${outDir}/${fileName}.txt`
+        });
+        //  Get SHA (if any)
+        sha = Object.assign({}, txtData).sha;
+    }
+    catch (err) {
+        sha = undefined;
+    }
     console.log(sha);
     //  Create/Update file contents
     const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt');
