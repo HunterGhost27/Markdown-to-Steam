@@ -35,7 +35,7 @@ const markdownConverter = async (file: string, outDir: string, core: core, octok
         path: file
     })
     //  Get SHA (if any)
-    const { sha } = { ...data }
+    const { sha } = { ...txtData }
 
     //  Create/Update file contents
     const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt')

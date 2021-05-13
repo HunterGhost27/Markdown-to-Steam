@@ -121,7 +121,7 @@ const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(voi
         path: file
     });
     //  Get SHA (if any)
-    const { sha } = Object.assign({}, data);
+    const { sha } = Object.assign({}, txtData);
     //  Create/Update file contents
     const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt');
     core.info(`Updating ${filePath}`);
