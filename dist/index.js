@@ -93,11 +93,8 @@ const parser_1 = __importDefault(__nccwpck_require__(358));
 const parser = new parser_1.default();
 //  Converts files from markdown into steam bb code and pushes the changes to outDir directory
 const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(void 0, void 0, void 0, function* () {
-    const [fileName, fileExtension] = file.split('.'); //  Get fileName and extension
-    if (fileExtension.toLowerCase() !== 'md') {
-        return;
-    } // Return if the file specified is not markdown
-    //  Get contents
+    const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt'); //  Output File Directory
+    //  Get contents of Source File
     const { data } = yield octokit.repos.getContent({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
@@ -106,7 +103,7 @@ const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(voi
     const { content: baseContent } = Object.assign({}, data);
     if (!baseContent) {
         return;
-    } //  If README.md has no contents then return
+    } //  If Source has no contents then return
     //  Decode and parse
     const content = js_base64_1.Base64.decode(baseContent);
     const results = parser.render(content);
@@ -119,7 +116,7 @@ const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(voi
         const { data: txtData } = yield octokit.repos.getContent({
             owner: github.context.repo.owner,
             repo: github.context.repo.repo,
-            path: `${outDir}/${fileName}.txt`
+            path: filePath
         });
         //  Get SHA (if any)
         sha = Object.assign({}, txtData).sha;
@@ -127,11 +124,9 @@ const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(voi
     catch (err) {
         sha = undefined;
     }
-    console.log(sha);
     //  Create/Update file contents
-    const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt');
     core.info(`Updating ${filePath}`);
-    const res = yield octokit.repos.createOrUpdateFileContents({
+    yield octokit.repos.createOrUpdateFileContents({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         path: filePath,
@@ -140,7 +135,6 @@ const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(voi
         message: 'Update Steam Workshop BB Content',
         content: js_base64_1.Base64.encode(results)
     });
-    console.log(res);
 });
 //  ============================
 exports.default = markdownConverter;
