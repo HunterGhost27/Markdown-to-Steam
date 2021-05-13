@@ -8,22 +8,34 @@ const parser = new Parser()
 
 //  Converts files from markdown into steam bb code and pushes the changes to outDir directory
 const markdownConverter = async (file: string, outDir: string, core: core, octokit: octokit, github: github) => {
-    //  Get Markdown contents
+
+    const [ fileName, fileExtension ] = file.split('.')  //  Get fileName and extension
+    if (fileExtension.toLowerCase() !== 'md') { return } // Return if the file specified is not markdown
+
+    //  Get contents
     const { data }  = await octokit.repos.getContent({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         path: file
     })
-
-    //  Get contents and SHA (if any)
-    const { content: baseContent, sha } = { ...data }
-    if (!baseContent) { return }
+    const { content: baseContent } = { ...data }
+    if (!baseContent) { return }    //  If README.md has no contents then return
     
     //  Decode and parse
     const content = Base64.decode(baseContent)
     const results = parser.render(content)
 
-    if (content.trim() == results.trim()) { return }
+    if (content.trim() == results.trim()) { return }    //  If there is no change required then return
+
+    //  Get txt file's SHA if it exists
+    file = `${fileName}.txt`    
+    const { data: txtData }  = await octokit.repos.getContent({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        path: file
+    })
+    //  Get SHA (if any)
+    const { sha } = { ...data }
 
     //  Create/Update file contents
     const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt')
