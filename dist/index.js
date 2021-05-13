@@ -110,6 +110,7 @@ const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(voi
     //  Decode and parse
     const content = js_base64_1.Base64.decode(baseContent);
     const results = parser.render(content);
+    core.info(content);
     if (content.trim() == results.trim()) {
         return;
     } //  If there is no change required then return
@@ -122,10 +123,11 @@ const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(voi
     });
     //  Get SHA (if any)
     const { sha } = Object.assign({}, txtData);
+    console.log(sha);
     //  Create/Update file contents
     const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt');
     core.info(`Updating ${filePath}`);
-    yield octokit.repos.createOrUpdateFileContents({
+    const res = yield octokit.repos.createOrUpdateFileContents({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         path: filePath,
@@ -134,6 +136,7 @@ const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(voi
         message: 'Update Steam Workshop BB Content',
         content: js_base64_1.Base64.encode(results)
     });
+    console.log(res);
 });
 //  ============================
 exports.default = markdownConverter;

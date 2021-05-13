@@ -24,6 +24,8 @@ const markdownConverter = async (file: string, outDir: string, core: core, octok
     //  Decode and parse
     const content = Base64.decode(baseContent)
     const results = parser.render(content)
+    
+    core.info(content)
 
     if (content.trim() == results.trim()) { return }    //  If there is no change required then return
 
@@ -37,10 +39,12 @@ const markdownConverter = async (file: string, outDir: string, core: core, octok
     //  Get SHA (if any)
     const { sha } = { ...txtData }
 
+    console.log(sha)
+
     //  Create/Update file contents
     const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt')
     core.info(`Updating ${filePath}`)
-    await octokit.repos.createOrUpdateFileContents({
+    const res = await octokit.repos.createOrUpdateFileContents({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         path: filePath,
@@ -49,6 +53,8 @@ const markdownConverter = async (file: string, outDir: string, core: core, octok
         message: 'Update Steam Workshop BB Content',
         content: Base64.encode(results)
     })
+
+    console.log(res)
 }
 
 //  ============================
