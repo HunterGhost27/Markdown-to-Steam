@@ -47,7 +47,7 @@ jobs:
       # ================================
 
       - name: Markdown-to-Steam
-        uses: HunterGhost27/Markdown-to-Steam@v1.0.0
+        uses: HunterGhost27/Markdown-to-Steam@main
         id: Markdown-to-Steam
 
         # Config Parameters
