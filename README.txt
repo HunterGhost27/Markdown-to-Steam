@@ -1,6 +1,6 @@
 [h1]Markdown-to-Steam[/h1]
 
-GitHub Action to automatically parse README.md into Steam BB code text file.
+GitHub Action to automatically parse README.md into a Steam BB-code text file.
 
 [h3]Workflow setup[/h3]
 
@@ -11,7 +11,7 @@ Create a workflow file [code].github/workflows/md2steam.yaml[/code].
 [h1]MARKDOWN-TO-STEAM[/h1]
 [h1]=================[/h1]
 
-[h1]This workflow parses the repo's README.md file and creates/updates a text file for the steam workshop description[/h1]
+[h1]This workflow converts the repo's README.md into steam bb-code[/h1]
 
 name: Markdown-to-Steam
 
