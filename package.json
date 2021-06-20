@@ -1,5 +1,5 @@
 {
-  "name": "markdown-to-steam",
+  "name": "gh-action-markdown-to-steam-bb",
   "version": "1.0.0",
   "description": "GitHub Action to convert markdown files into Steam BB code",
   "main": "index.js",
