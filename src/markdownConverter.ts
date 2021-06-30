@@ -4,6 +4,7 @@ import { Base64 } from 'js-base64'
 import Parser from './parser'
 
 //  Type Definitions
+import type { Endpoints } from '@octokit/types'
 import type { core, github, octokit } from './typeDefinitions'
 
 //  =======================
@@ -13,6 +14,12 @@ const parser = new Parser()
 //  Converts files from markdown into steam bb code and pushes the changes to outDir directory
 const markdownConverter = async (file: string, outDir: string, core: core, octokit: octokit, github: github) => {
 
+    const { owner, repo } = github.context.repo
+
+    //  Get default branch
+    const { data: { default_branch: branch } } = await octokit.request(`GET /repos/${owner}/${repo}`) as Endpoints['GET /repos/{owner}/{repo}']['response']
+
+
     const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt')    //  Output File Directory
 
     //  Get contents of Source File
@@ -21,7 +28,8 @@ const markdownConverter = async (file: string, outDir: string, core: core, octok
         repo: github.context.repo.repo,
         path: file
     })
-    const { content: baseContent } = { ...data } as { content: string }
+
+    const { content: baseContent, sha } = data as { content: string, sha: string }
     if (!baseContent) { return }    //  If Source has no contents then return
 
     //  Decode and parse
@@ -30,28 +38,13 @@ const markdownConverter = async (file: string, outDir: string, core: core, octok
 
     if (content.trim() === results.trim()) { return }    //  If there is no change required then return
 
-    //  Get txt file's SHA if it exists
-    let sha
-    try {
-        const { data: txtData } = await octokit.repos.getContent({
-            owner: github.context.repo.owner,
-            repo: github.context.repo.repo,
-            path: filePath
-        }) as { data: { sha: string } }
-
-        //  Get SHA (if any)
-        sha = { ...txtData }.sha
-    } catch (err) {
-        sha = undefined
-    }
-
     //  Create/Update file contents
     core.info(`Updating ${filePath}`)
     await octokit.repos.createOrUpdateFileContents({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
+        owner,
+        repo,
         path: filePath,
-        branch: 'main',
+        branch,
         sha,
         message: 'Update Steam Workshop BB Content',
         content: Base64.encode(results)
