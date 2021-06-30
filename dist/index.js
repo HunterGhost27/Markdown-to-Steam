@@ -32,7 +32,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 //  GitHub Actions Toolkit
 const core = __importStar(__nccwpck_require__(21));
 const github = __importStar(__nccwpck_require__(366));
-const markdownConverter_1 = __importDefault(__nccwpck_require__(518));
+const markdownConverter_1 = __importDefault(__nccwpck_require__(518)); //  Markdown Converter
 const file = core.getInput('file'); //  The File to parse
 const outDir = core.getInput('outDir'); //  Output directory
 //  =======
@@ -87,10 +87,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+//  Library
 const path = __importStar(__nccwpck_require__(622));
 const js_base64_1 = __nccwpck_require__(925);
 const parser_1 = __importDefault(__nccwpck_require__(358));
+//  =======================
 const parser = new parser_1.default();
+//  =======================
 //  Converts files from markdown into steam bb code and pushes the changes to outDir directory
 const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(void 0, void 0, void 0, function* () {
     const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt'); //  Output File Directory
@@ -107,7 +110,7 @@ const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(voi
     //  Decode and parse
     const content = js_base64_1.Base64.decode(baseContent);
     const results = parser.render(content);
-    if (content.trim() == results.trim()) {
+    if (content.trim() === results.trim()) {
         return;
     } //  If there is no change required then return
     //  Get txt file's SHA if it exists
@@ -158,10 +161,9 @@ class Parser {
         this.render = (md) => {
             let result = md;
             this.replacers.forEach(rx => { result = result.replace(rx.regex, rx.replace); });
-            result = result.trim();
             return result;
         };
-        //  The order of .replace matters! Elements higher up should be replaced first. 
+        //  The order of .replace matters! Elements higher up will be replaced first. 
         this.replacers = new Map([
             //  STYLES
             //  ------
@@ -177,6 +179,7 @@ class Parser {
             ['underline', { regex: /\_{2}(.*?)\_{2}/gm, replace: '[u]$1[/u]' }],
             //                      _Every-thing in between_                            [i]Every-thing in between[/i]
             ['alt-italic', { regex: /\_(.*?)\_/gm, replace: '[i]$1[/i]' }],
+            ['alt-italic-fix', { regex: /(\w+?)\[i\](.*?)\[\/i\]/gm, replace: '$1_$2_' }],
             //                      ~~Every-thing in between~~                          [strike]Every-thing in between[/strike]
             ['strike', { regex: /\~~(.*?)\~~/gm, replace: '[strike]$1[/strike]' }],
             //                      ||Every-thing in between||                          [spoiler]Every-thing in between[/spoiler]
@@ -185,20 +188,21 @@ class Parser {
             //  -------------
             //                      [Text](https://link.com)                            [url=https://link.com]Text[/url]
             ['link', { regex: /\[([^\[]+)\]\(([^\)]+)\)/gm, replace: '[url=$2]$1[/url]' }],
-            //                      `Hackerman`                                        [code]Hackerman[/code]
-            ['code', { regex: /`((.|\n)*?)`/gm, replace: '[code]$1[/code]' }],
-            //                      > You miss 100% of the shots.`                      [quote]You miss 100% of the shots.[/quote]
-            ['quote', { regex: /^\>[\s]?(.*)/gm, replace: '$1[quote]$2[/quote]' }],
+            ['code-start', { regex: /```(.+)/g, replace: '[code]' }],
+            ['code-end', { regex: /```/g, replace: '[/code]' }],
             //                      >Michael-Scott You miss 100% of the shots.`         [quote=Michael-Scott]You miss 100% of the shots.[/quote]
-            ['authored-quote', { regex: /^\>[\s]?(.*)/gm, replace: '$1[quote]$2[/quote]' }],
+            ['authored-quote', { regex: /^>([\S]+)[\s]+(.*)/gm, replace: '[quote=$1]$2[/quote]' }],
+            //                      > You miss 100% of the shots.`                      [quote]You miss 100% of the shots.[/quote]
+            ['quote', { regex: /^>[\s]?(.*)/gm, replace: '[quote]$1[/quote]' }],
+            //                      --- or ===                                          <hr>
+            ['horizontal-rule', { regex: /^-{3,}/gm, replace: '<hr>' }],
+            ['horizontal-rule-alt', { regex: /^={3,}/gm, replace: '<hr>' }],
             //  LISTS
             //  -----
-            //  Needs more work
-            // ['ordered-list-start',  { regex: /^[\s]*[1]\.[\s]*(.*)/gm,                  replace: '[olist]\n[*]$1'               }],
-            // ['ordered-list',        { regex: /^[\s]*[2-9]+\.[\s]*(.*)/gm,               replace: '[*]$1'                        }],
-            // ['ordered-list-end',    { regex: /^[\s]+[2-9]+\.[\s]+(.*)/gm,               replace: '[*]$1'                        }],
-            //  Needs more work
-            // ['list',                { regex: /^[\s]*[\*\-\+][\s]*(.*)/gm,                replace: '[list]\n[*]$1'               }],
+            ['ordered-list', { regex: /(\n|^)[ ]*[0-9]+\.[ ](.*)/gm, replace: '$1[olist]\n[*] $2\n[/olist]' }],
+            ['ordered-fix', { regex: /(\n|^)\[\/olist\][\s]*?\[olist\]/gm, replace: '' }],
+            ['unordered-list', { regex: /(\n|^)[ ]*[\*\-\+][ ](.*)/gm, replace: '$1[list]\n[*] $2\n[/list]' }],
+            ['unordered-fix', { regex: /(\n|^)\[\/list\][\s]*?\[list\]/gm, replace: '' }],
             //  HEADERS
             //  -------
             //                      ### Basically Irrelevant                            [h3]Basically Irrelevant[/h3]
