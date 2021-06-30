@@ -4,9 +4,9 @@ GitHub Action to automatically parse README.md into a Steam BB-code text file.
 
 [h3]Workflow setup[/h3]
 
-Create a workflow file [code].github/workflows/md2steam.yaml[/code].
+Create a workflow file `.github/workflows/md2steam.yaml`.
 
-[code][/code][code]yaml
+[code]
 [h1]=================[/h1]
 [h1]MARKDOWN-TO-STEAM[/h1]
 [h1]=================[/h1]
@@ -22,7 +22,9 @@ on:
   # When README.md is updated
   push:
     paths:
-      - README.md
+[list]
+[*] README.md
+[/list]
 
   # When a workflow event is dispatched manually
   workflow_dispatch:
@@ -40,13 +42,17 @@ jobs:
       # ================
 
       # Required for GITHUB_WORKSPACE
-      - name: Checkout
+[list]
+[*] name: Checkout
+[/list]
         uses: actions/checkout@v2
 
       # Execute Markdown-to-Steam Action
       # ================================
 
-      - name: Markdown-to-Steam
+[list]
+[*] name: Markdown-to-Steam
+[/list]
         uses: HunterGhost27/Markdown-to-Steam@main
         id: Markdown-to-Steam
 
@@ -64,9 +70,9 @@ jobs:
         # ---------------------
 
         env:
-          GITHUB[i]TOKEN: ${{ secrets.GITHUB[/i]TOKEN }} # Needed to make use of the GitHub API
-[/code][code][/code]
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to make use of the GitHub API
+[/code]
 
 [h2]Permissions[/h2]
 
-This action needs the [code]GITHUB_TOKEN[/code] secret to make use of the GitHub API.
+This action needs the `GITHUB_TOKEN` secret to make use of the GitHub API.
