@@ -47,23 +47,21 @@ export default class Parser {
             //                      `Hackerman`                                        [code]Hackerman[/code]
             ['code',                { regex: /`((.|\n)*?)`/gm,                          replace: '[code]$1[/code]'              }],
 
-            //                      > You miss 100% of the shots.`                      [quote]You miss 100% of the shots.[/quote]
-            ['quote',               { regex: /^\>[\s]?(.*)/gm,                          replace: '$1[quote]$2[/quote]'          }],
-
             //                      >Michael-Scott You miss 100% of the shots.`         [quote=Michael-Scott]You miss 100% of the shots.[/quote]
-            ['authored-quote',      { regex: /^\>[\s]?(.*)/gm,                          replace: '$1[quote]$2[/quote]'          }],
+            ['authored-quote',      { regex: /^>(.-)[\s]?(.-)/gm,                       replace: '[quote=$1]$2[/quote]'         }],
             
+            //                      > You miss 100% of the shots.`                      [quote]You miss 100% of the shots.[/quote]
+            ['quote',               { regex: /^>[\s]?(.-)/gm,                           replace: '[quote]$1[/quote]'            }],
+
             //  LISTS
             //  -----
             
-            //  Needs more work
-            // ['ordered-list-start',  { regex: /^[\s]*[1]\.[\s]*(.*)/gm,                  replace: '[olist]\n[*]$1'               }],
-            // ['ordered-list',        { regex: /^[\s]*[2-9]+\.[\s]*(.*)/gm,               replace: '[*]$1'                        }],
-            // ['ordered-list-end',    { regex: /^[\s]+[2-9]+\.[\s]+(.*)/gm,               replace: '[*]$1'                        }],
-            
-            //  Needs more work
-            // ['list',                { regex: /^[\s]*[\*\-\+][\s]*(.*)/gm,                replace: '[list]\n[*]$1'               }],
-            
+            ['ordered-list',        { regex: /(\n|^)[ ]*[0-9]+\.[ ](.*)/gm,             replace: '$1[olist]\n[*] $2\n[/olist]'  }],
+            ['ordered-fix',         { regex: /\n\[\/olist\]\n\[olist\]/gm,              replace: ''                             }],
+
+            ['unordered-list',      { regex: /(\n|^)[ ]*[\*\-\+][ ](.*)/gm,             replace: '$1[ulist]\n[*] $2\n[/ulist]'  }],
+            ['unordered-fix',       { regex: /\n\[\/ulist\]\n\[ulist\]/gm,              replace: ''                             }],
+
             //  HEADERS
             //  -------
             
