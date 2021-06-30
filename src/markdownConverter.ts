@@ -14,6 +14,7 @@ const parser = new Parser()
 //  Converts files from markdown into steam bb code and pushes the changes to outDir directory
 const markdownConverter = async (file: string, outDir: string, core: core, octokit: octokit, github: github) => {
 
+    //  Repo name and owner
     const { owner, repo } = github.context.repo
 
     //  Get default branch
@@ -23,13 +24,11 @@ const markdownConverter = async (file: string, outDir: string, core: core, octok
     const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt')    //  Output File Directory
 
     //  Get contents of Source File
-    const { data } = await octokit.repos.getContent({
+    const { data: { content: baseContent } } = await octokit.repos.getContent({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         path: file
-    })
-
-    const { content: baseContent, sha } = data as { content: string, sha: string }
+    }) as { data: { content: string } }
     if (!baseContent) { return }    //  If Source has no contents then return
 
     //  Decode and parse
@@ -37,6 +36,19 @@ const markdownConverter = async (file: string, outDir: string, core: core, octok
     const results = parser.render(content)
 
     if (content.trim() === results.trim()) { return }    //  If there is no change required then return
+
+    //  Get txt file's SHA if it exists
+    let sha
+    try {
+        const { data: { sha: SHA } } = await octokit.repos.getContent({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            path: filePath
+        }) as { data: { sha: string } }
+        sha = SHA
+    } catch (err) {
+        sha = undefined
+    }
 
     //  Create/Update file contents
     core.info(`Updating ${filePath}`)

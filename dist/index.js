@@ -96,17 +96,17 @@ const parser = new parser_1.default();
 //  =======================
 //  Converts files from markdown into steam bb code and pushes the changes to outDir directory
 const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(void 0, void 0, void 0, function* () {
+    //  Repo name and owner
     const { owner, repo } = github.context.repo;
     //  Get default branch
     const { data: { default_branch: branch } } = yield octokit.request(`GET /repos/${owner}/${repo}`);
     const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt'); //  Output File Directory
     //  Get contents of Source File
-    const { data } = yield octokit.repos.getContent({
+    const { data: { content: baseContent } } = yield octokit.repos.getContent({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         path: file
     });
-    const { content: baseContent, sha } = data;
     if (!baseContent) {
         return;
     } //  If Source has no contents then return
@@ -116,6 +116,19 @@ const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(voi
     if (content.trim() === results.trim()) {
         return;
     } //  If there is no change required then return
+    //  Get txt file's SHA if it exists
+    let sha;
+    try {
+        const { data: { sha: SHA } } = yield octokit.repos.getContent({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            path: filePath
+        });
+        sha = SHA;
+    }
+    catch (err) {
+        sha = undefined;
+    }
     //  Create/Update file contents
     core.info(`Updating ${filePath}`);
     yield octokit.repos.createOrUpdateFileContents({
