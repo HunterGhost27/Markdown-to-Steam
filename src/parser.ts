@@ -48,10 +48,11 @@ export default class Parser {
             ['code',                { regex: /`((.|\n)*?)`/gm,                          replace: '[code]$1[/code]'              }],
 
             //                      >Michael-Scott You miss 100% of the shots.`         [quote=Michael-Scott]You miss 100% of the shots.[/quote]
-            ['authored-quote',      { regex: /^>(.-)[\s]?(.-)/gm,                       replace: '[quote=$1]$2[/quote]'         }],
+            ['authored-quote',      { regex: /^>([\S]+)[\s]+(.*)/gm,                    replace: '[quote=$1]$2[/quote]'         }],
             
             //                      > You miss 100% of the shots.`                      [quote]You miss 100% of the shots.[/quote]
-            ['quote',               { regex: /^>[\s]?(.-)/gm,                           replace: '[quote]$1[/quote]'            }],
+            ['quote',               { regex: /^>[\s]?(.*)/gm,                           replace: '[quote]$1[/quote]'            }],
+            
 
             //  LISTS
             //  -----

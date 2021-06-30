@@ -80,6 +80,18 @@ describe('Parse special text', () => {
     it('should parse code', () => {
         expect(parser.render("`this.isNotGood() === true`")).toBe("[code]this.isNotGood() === true[/code]")
     })
+
+    //  Quotes
+    //  ------
+
+    it('should parse quotes', () => {
+        expect(parser.render('> You miss 100% of the shots')).toBe('[quote]You miss 100% of the shots[/quote]')
+    })
+
+    it('should parse authored quotes', () => {
+        expect(parser.render('>Michael-Scott You miss 100% of the shots')).toBe('[quote=Michael-Scott]You miss 100% of the shots[/quote]')
+    })
+
 })
 
 describe('Parse headers', () => {
