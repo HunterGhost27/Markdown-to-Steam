@@ -2,7 +2,7 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 
-import markdownConverter from './markdownConverter'
+import markdownConverter from './markdownConverter' //  Markdown Converter
 
 const file = core.getInput('file')  //  The File to parse
 const outDir = core.getInput('outDir')  //  Output directory
