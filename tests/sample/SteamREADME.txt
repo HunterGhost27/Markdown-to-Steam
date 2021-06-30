@@ -8,20 +8,25 @@ The [b][i]Stats Configurator[/i][/b] allows you to modify and customize stats by
 
 [h2]Releases[/h2]
 
-- ~~**_[Steam Workshop](#SteamWorkshop)_**~~
-- **_[Github](https://github.com/Shresht7/Stats-Configurator/releases)_**
+[list]
+[*] [strike][b][i][url=#SteamWorkshop]Steam Workshop[/url][/i][/b][/strike]
+[*] [b][i][url=https://github.com/Shresht7/Stats-Configurator/releases]Github[/url][/i][/b]
+[/list]
 
 [h2]Requirements[/h2]
 
-- **_[Norbyte's Script-Extender](https://github.com/Norbyte/ositools)_**
+[list]
+[*] [b][i][url=https://github.com/Norbyte/ositools]Norbyte's Script-Extender[/url][/i][/b]
+[/list]
 
 [h2]Features[/h2]
 
 [h3]Configure to your heart's desire[/h3]
 
-Users can override stats by creating [b]json files[/b] (Default: [code]Config.json[/code]) like so:
+Users can override stats by creating [b]json files[/b] (Default: `Config.json`) like so:
 
-[noparse][code]{
+[code]
+{
   "Projectile_Fireball": {
     "ActionPoints": 4,
     "Cooldown": 7,
@@ -29,43 +34,47 @@ Users can override stats by creating [b]json files[/b] (Default: [code]Config.js
     "DisplayName": "BOOMER"
   }
 }
-[/code][/noparse]
+[/code]
 
-<blockquote>
-All config-files are created in the Osiris Data\StatsConfigurator\ folder. - i.e. [code]..\Documents\Larian Studios\Divinity Original Sin 2 Definitive Edition\Osiris Data\StatsConfigurator\[/code].
-</blockquote>
+[quote]Create your config-files in the Osiris Data\StatsConfigurator\ folder. - i.e. `..\Documents\Larian Studios\Divinity Original Sin 2 Definitive Edition\Osiris Data\StatsConfigurator\`.[/quote]
 
-When this configuration loads, it will override [code]Projectile_Fireball[/code]. The [b]Fireball[/b] skill will now cost [b][i]4 ActionPoints[/i][/b], have a [b][i]7 turn Cooldown[/i][/b], [i]explode[/i] in a [b][i]10m radius[/i][/b] and will be called [b][i]BOOMER[/i][/b].
+When this configuration loads, it will override `Projectile_Fireball`. The [b]Fireball[/b] skill will now cost [b][i]4 ActionPoints_[/b], have a [b][i]7 turn Cooldown[/i][/b], [/i]explode_ in a [b][i]10m radius[/i][/b] and will be called [b][i]BOOMER[/i][/b].
 
-[img]https://imgur.com/Vc3NkF8.png[/img]
+![url=https://imgur.com/Vc3NkF8.png]Fireball-Example[/url]
 
-[b][i]Checkout more [url=about:///Documentation/Examples.md]examples![/url][/i][/b]
+[b][i]Checkout more [url=Documentation/Examples.md]examples![/url][/i][/b]
 
 [h3]Quick Start[/h3]
 
-1. Create/Edit `Config.json` in `Osiris Data\StatsConfigurator\`.
-2. `Load Configuration` from the in-game **mod-menu**.
-3. `Rebuild ConfigData` once you're happy with your edits.
-4. `Broadcast` your **ConfigData** to any peers. (Multiplayer)
-5. `Verify` client configs to ensure everyone is on the same page.
-6. **Done** - your **ConfigData** will automatically reload your edits whenever the game loads. Repeat the aforementioned options as necessary.
-7. Restart the game for changes to apply.
+[olist]
+[*] Create/Edit `Config.json` in `Osiris Data\StatsConfigurator\`.
+[*] `Load Configuration` from the in-game [b]mod-menu[/b].
+[*] `Rebuild ConfigData` once you're happy with your edits.
+[*] `Broadcast` your [b]ConfigData[/b] to any peers. (Multiplayer)
+[*] `Verify` client configs to ensure everyone is on the same page.
+[*] [b]Done[/b] - your [b]ConfigData[/b] will automatically reload your edits whenever the game loads. Repeat the aforementioned options as necessary.
+[*] Restart the game for changes to apply.
+[/olist]
 
-============================
+<hr>
 
-[b][i][url=about:///Documentation/Extensive-Documentation.md]READ THE EXTENSIVE DOCUMENTATION[/url][/i][/b]
+[b][i][url=Documentation/Extensive-Documentation.md]READ THE EXTENSIVE DOCUMENTATION[/url][/i][/b]
 
-============================
+<hr>
 
 [h2]Complementary Mods[/h2]
 
-- [**EXIM**](https://steamcommunity.com/sharedfiles/filedetails/?id=2006677782) by **_Luxen_** - EXIM allows you to export/import and modify characters stats, skills, inventory and hotbar.
-- [**UI Components Library**](https://steamcommunity.com/sharedfiles/filedetails/?id=2337228868) - Enables the ContextMenu option to _apply configurations_.
+[list]
+[*] [[b]EXIM[url=https://steamcommunity.com/sharedfiles/filedetails/?id=2006677782]/b][/url] by [b][i]Luxen[/i][/b] - EXIM allows you to export/import and modify characters stats, skills, inventory and hotbar.
+[*] [[b]UI Components Library[url=https://steamcommunity.com/sharedfiles/filedetails/?id=2337228868]/b][/url] - Enables the ContextMenu option to [i]apply configurations[/i].
+[/list]
 
 <hr>
 
 [h2]Thanks and Credits[/h2]
 
-- **[Divinity: Original Sin 2](http://store.steampowered.com/app/435150/Divinity_Original_Sin_2/)**, a game by **[Larian Studios](http://larian.com/)**.
-- **LaughingLeader** for the **[Source Control Generator](https://github.com/LaughingLeader/SourceControlGenerator)**.
-- Huge thanks to **Norbyte** for the **[Script-Extender](https://github.com/Norbyte/ositools)**, for valuable advice and for having a fix for every problem.
+[list]
+[*] [b][url=http://store.steampowered.com/app/435150/Divinity_Original_Sin_2/]Divinity: Original Sin 2[/url][/b], a game by [b][url=http://larian.com/]Larian Studios[/url][/b].
+[*] [b]LaughingLeader[/b] for the [b][url=https://github.com/LaughingLeader/SourceControlGenerator]Source Control Generator[/url][/b].
+[*] Huge thanks to [b]Norbyte[/b] for the [b][url=https://github.com/Norbyte/ositools]Script-Extender[/url][/b], for valuable advice and for having a fix for every problem.
+[/list]

@@ -7,7 +7,7 @@ export default class Parser {
         //  REPLACERS
         //  =========
     
-        //  The order of .replace matters! Elements higher up should be replaced first. 
+        //  The order of .replace matters! Elements higher up will be replaced first. 
 
         this.replacers = new Map([
         
@@ -27,10 +27,11 @@ export default class Parser {
             ['italic',              { regex: /\*{1}(.*?)\*{1}/gm,                       replace: '[i]$1[/i]'                    }],
 
             //                      __Every-thing in between__                          [u]Every-thing in between[/u]
-            ['underline',           { regex: /\_{2}(.*?)\_{2}/gm,                        replace: '[u]$1[/u]'                    }],
+            ['underline',           { regex: /\_{2}(.*?)\_{2}/gm,                       replace: '[u]$1[/u]'                    }],
 
             //                      _Every-thing in between_                            [i]Every-thing in between[/i]
             ['alt-italic',          { regex: /\_(.*?)\_/gm,                             replace: '[i]$1[/i]'                    }],
+            ['alt-italic-fix',      { regex: /(\w+?)\[i\](.*?)\[\/i\]/gm,               replace: '$1_$2_'                       }],
 
             //                      ~~Every-thing in between~~                          [strike]Every-thing in between[/strike]
             ['strike',              { regex: /\~~(.*?)\~~/gm,                           replace: '[strike]$1[/strike]'          }],
@@ -44,8 +45,8 @@ export default class Parser {
             //                      [Text](https://link.com)                            [url=https://link.com]Text[/url]
             ['link',                { regex: /\[([^\[]+)\]\(([^\)]+)\)/gm,              replace: '[url=$2]$1[/url]'             }],
 
-            //                      `Hackerman`                                        [code]Hackerman[/code]
-            ['code',                { regex: /`((.|\n)*?)`/gm,                          replace: '[code]$1[/code]'              }],
+            ['code-start',          { regex: /```(.+)/g,                                replace: '[code]'                       }],
+            ['code-end',            { regex: /```/g,                                    replace: '[/code]'                      }],
 
             //                      >Michael-Scott You miss 100% of the shots.`         [quote=Michael-Scott]You miss 100% of the shots.[/quote]
             ['authored-quote',      { regex: /^>([\S]+)[\s]+(.*)/gm,                    replace: '[quote=$1]$2[/quote]'         }],
@@ -53,15 +54,18 @@ export default class Parser {
             //                      > You miss 100% of the shots.`                      [quote]You miss 100% of the shots.[/quote]
             ['quote',               { regex: /^>[\s]?(.*)/gm,                           replace: '[quote]$1[/quote]'            }],
             
+            //                      --- or ===                                          <hr>
+            ['horizontal-rule',     { regex: /^-{3,}/gm,                                replace: '<hr>'                         }],
+            ['horizontal-rule-alt', { regex: /^={3,}/gm,                                replace: '<hr>'                         }],
 
             //  LISTS
             //  -----
             
             ['ordered-list',        { regex: /(\n|^)[ ]*[0-9]+\.[ ](.*)/gm,             replace: '$1[olist]\n[*] $2\n[/olist]'  }],
-            ['ordered-fix',         { regex: /\n\[\/olist\]\n\[olist\]/gm,              replace: ''                             }],
+            ['ordered-fix',         { regex: /(\n|^)\[\/olist\][\s]*?\[olist\]/gm,         replace: ''                          }],
 
-            ['unordered-list',      { regex: /(\n|^)[ ]*[\*\-\+][ ](.*)/gm,             replace: '$1[ulist]\n[*] $2\n[/ulist]'  }],
-            ['unordered-fix',       { regex: /\n\[\/ulist\]\n\[ulist\]/gm,              replace: ''                             }],
+            ['unordered-list',      { regex: /(\n|^)[ ]*[\*\-\+][ ](.*)/gm,             replace: '$1[list]\n[*] $2\n[/list]'    }],
+            ['unordered-fix',       { regex: /(\n|^)\[\/list\][\s]*?\[list\]/gm,           replace: ''                          }],
 
             //  HEADERS
             //  -------
@@ -83,7 +87,6 @@ export default class Parser {
     render = (md: string) => {
         let result = md
         this.replacers.forEach(rx => { result = result.replace(rx.regex, rx.replace) })
-        result = result.trim()
         return result
     }
 }

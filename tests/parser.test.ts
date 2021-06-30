@@ -1,6 +1,25 @@
+//  Library
+import fs from 'fs'
+import path from 'path'
 import Parser from '../src/parser'
 
+//  =======================
 const parser = new Parser()
+//  =======================
+
+//  INITIALIZATION
+//  ==============
+
+describe('Parser Initialization', () => {
+    it('should properly initialize', () => {
+        expect(parser).toBeInstanceOf(Parser)
+        expect(parser).toHaveProperty('replacers')
+        expect(parser).toHaveProperty('render')
+    })
+})
+
+//  PARSE STYLES
+//  ============
 
 describe('Parse styles', () => {
 
@@ -38,8 +57,15 @@ describe('Parse styles', () => {
 
     it('should parse _ as [i]', () => {
         expect(parser.render('_italic_')).toBe('[i]italic[/i]')
+        expect(parser.render(' _italic_')).toBe(' [i]italic[/i]')
+        expect(parser.render(' _italic_.')).toBe(' [i]italic[/i].')
+        expect(parser.render('**_italic_***')).toBe('[b][i]italic[/i][/b]*')
         expect(parser.render('_ita*lic_')).toBe('[i]ita*lic[/i]')
         expect(parser.render('_ita lic_')).toBe('[i]ita lic[/i]')
+        expect(parser.render('_ita and lic_')).toBe('[i]ita and lic[/i]')
+        expect(parser.render('_it a, lic_')).toBe('[i]it a, lic[/i]')
+        expect(parser.render('dis_ita lic_')).toBe('dis_ita lic_')
+        expect(parser.render('not dis_ita lic_')).toBe('not dis_ita lic_')
     })
 
     //  Underline
@@ -65,6 +91,9 @@ describe('Parse styles', () => {
     })
 })
 
+//  PARSE SPECIAL TEXT
+//  ==================
+
 describe('Parse special text', () => {
 
     //  Links
@@ -78,7 +107,66 @@ describe('Parse special text', () => {
     //  ----
 
     it('should parse code', () => {
-        expect(parser.render("`this.isNotGood() === true`")).toBe("[code]this.isNotGood() === true[/code]")
+        expect(parser.render(
+            [
+                "",
+                "```json",
+                "{",
+                "  \"Projectile_Fireball\": {",
+                "    \"ActionPoints\": 4,",
+                "    \"Cooldown\": 7,",
+                "    \"ExplodeRadius\": 10,",
+                "    \"DisplayName\": \"BOOMER\"",
+                "   }",
+                "}",
+                "```",
+                ""
+            ].join('\n')
+        ))
+            .toBe(
+                [
+                    "",
+                    "[code]",
+                    "{",
+                    "  \"Projectile_Fireball\": {",
+                    "    \"ActionPoints\": 4,",
+                    "    \"Cooldown\": 7,",
+                    "    \"ExplodeRadius\": 10,",
+                    "    \"DisplayName\": \"BOOMER\"",
+                    "   }",
+                    "}",
+                    "[/code]",
+                    ""
+                ].join('\n')
+            )
+        expect(parser.render(
+            [
+                "```json",
+                "{",
+                "  \"Projectile_Fireball\": {",
+                "    \"ActionPoints\": 4,",
+                "    \"Cooldown\": 7,",
+                "    \"ExplodeRadius\": 10,",
+                "    \"DisplayName\": \"BOOMER\"",
+                "   }",
+                "}",
+                "```",
+            ].join('\n')
+        ))
+            .toBe(
+                [
+                    "[code]",
+                    "{",
+                    "  \"Projectile_Fireball\": {",
+                    "    \"ActionPoints\": 4,",
+                    "    \"Cooldown\": 7,",
+                    "    \"ExplodeRadius\": 10,",
+                    "    \"DisplayName\": \"BOOMER\"",
+                    "   }",
+                    "}",
+                    "[/code]",
+                ].join('\n')
+            )
     })
 
     //  Quotes
@@ -92,7 +180,19 @@ describe('Parse special text', () => {
         expect(parser.render('>Michael-Scott You miss 100% of the shots')).toBe('[quote=Michael-Scott]You miss 100% of the shots[/quote]')
     })
 
+    //  Horizontal-Rule
+
+    it('should parse horizontal-rules', () => {
+        expect(parser.render('---')).toBe('<hr>')
+        expect(parser.render('===')).toBe('<hr>')
+        expect(parser.render('------')).toBe('<hr>')
+        expect(parser.render('======')).toBe('<hr>')
+    })
+
 })
+
+//  PARSE HEADERS
+//  =============
 
 describe('Parse headers', () => {
 
@@ -112,6 +212,9 @@ describe('Parse headers', () => {
         expect(parser.render('### Mostly Irrelevant')).toBe('[h3]Mostly Irrelevant[/h3]')
     })
 })
+
+//  PARSE LISTS
+//  ===========
 
 describe('Parse Lists', () => {
 
@@ -160,7 +263,7 @@ describe('Parse Lists', () => {
         ].join('\n')
 
         const bbul = [
-            "[ulist]",
+            "[list]",
             "[*] Create/Edit Config.json in Osiris Data\\StatsConfigurator\\.",
             "[*] Load Configuration from the in-game [b]mod-menu[/b].",
             "[*] Rebuild ConfigData once you're happy with your edits.",
@@ -168,11 +271,24 @@ describe('Parse Lists', () => {
             "[*] Verify client configs to ensure everyone is on the same page.",
             "[*] [b]Done[/b] - your [b]ConfigData[/b] will automatically reload your edits whenever the game loads. Repeat the aforementioned options as necessary.",
             "[*] Restart the game for changes to apply.",
-            "[/ulist]",
+            "[/list]",
         ].join('\n')
 
         expect(parser.render(mdul)).toBe(bbul)
     })
 
+})
 
+//  PARSE FULL TEXT
+//  ===============
+
+describe('Final Boss', () => {
+    it('should defeat final boss', () => {
+
+        const README = fs.readFileSync(path.join(__dirname, '/sample/README.md'), { encoding: 'utf-8' }).trim()
+
+        const SteamREADME = fs.readFileSync(path.join(__dirname, '/sample/SteamREADME.txt'), { encoding: 'utf-8' }).trim()
+
+        expect(parser.render(README)).toBe(SteamREADME)
+    })
 })
