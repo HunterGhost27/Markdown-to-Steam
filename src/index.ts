@@ -4,8 +4,9 @@ import * as github from '@actions/github'
 
 import markdownConverter from './markdownConverter' //  Markdown Converter
 
+//  -----------------------------------------------------
 const file = core.getInput('file')  //  The File to parse
-const outDir = core.getInput('outDir')  //  Output directory
+//  -----------------------------------------------------
 
 //  =======
 //  OCTOKIT
@@ -17,6 +18,6 @@ const GITHUB_ACCESS_TOKEN = process.env.GITHUB_TOKEN || ''
 const octokit = github.getOctokit(GITHUB_ACCESS_TOKEN)
 
 //  Convert files and push changes to output directory
-markdownConverter(file, outDir, core, octokit, github)
-    .then(() => core.info(`Successfully converted ${file} into steam-workshop bb code`))
+markdownConverter(file, core, octokit, github)
+    .then(() => core.info(`Successfully converted ${file} --> Steam BB-Code`))
     .catch((err: Error) => core.setFailed(err))

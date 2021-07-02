@@ -9,3 +9,10 @@ import type { RestEndpointMethods } from '@octokit/plugin-rest-endpoint-methods/
 export type octokit = { [x: string]: any } & { [x: string]: any } & Octokit & RestEndpointMethods & { paginate: PaginateInterface }
 export type github = typeof import('@actions/github')
 export type core = typeof import('@actions/core')
+
+export type githubContent = {
+    data: {
+        content: string,
+        sha: string
+    }
+}

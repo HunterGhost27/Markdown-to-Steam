@@ -56,9 +56,12 @@ jobs:
         with:
           # The file to change
           file: "README.md"
-
+          
           # Target directory
           outDir: "."
+
+          # Commit Message
+          commitMessage: "Update Steam BB-Content"
 
         # Environment Variables
         # ---------------------

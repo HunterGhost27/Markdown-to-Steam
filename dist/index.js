@@ -33,8 +33,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(21));
 const github = __importStar(__nccwpck_require__(366));
 const markdownConverter_1 = __importDefault(__nccwpck_require__(518)); //  Markdown Converter
+//  -----------------------------------------------------
 const file = core.getInput('file'); //  The File to parse
-const outDir = core.getInput('outDir'); //  Output directory
+//  -----------------------------------------------------
 //  =======
 //  OCTOKIT
 //  =======
@@ -43,8 +44,8 @@ const GITHUB_ACCESS_TOKEN = process.env.GITHUB_TOKEN || '';
 !GITHUB_ACCESS_TOKEN && core.setFailed(`Invalid GITHUB_ACCESS_TOKEN`);
 const octokit = github.getOctokit(GITHUB_ACCESS_TOKEN);
 //  Convert files and push changes to output directory
-markdownConverter_1.default(file, outDir, core, octokit, github)
-    .then(() => core.info(`Successfully converted ${file} into steam-workshop bb code`))
+markdownConverter_1.default(file, core, octokit, github)
+    .then(() => core.info(`Successfully converted ${file} --> Steam BB-Code`))
     .catch((err) => core.setFailed(err));
 
 
@@ -95,18 +96,17 @@ const parser_1 = __importDefault(__nccwpck_require__(358));
 const parser = new parser_1.default();
 //  =======================
 //  Converts files from markdown into steam bb code and pushes the changes to outDir directory
-const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(void 0, void 0, void 0, function* () {
+const markdownConverter = (file, core, octokit, github) => __awaiter(void 0, void 0, void 0, function* () {
     //  Repo name and owner
     const { owner, repo } = github.context.repo;
+    //  Get input parameters
+    const outDir = core.getInput('outDir');
+    const message = core.getInput('commitMessage');
     //  Get default branch
     const { data: { default_branch: branch } } = yield octokit.request(`GET /repos/${owner}/${repo}`);
     const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt'); //  Output File Directory
     //  Get contents of Source File
-    const { data: { content: baseContent } } = yield octokit.repos.getContent({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        path: file
-    });
+    const { data: { content: baseContent } } = yield octokit.repos.getContent({ owner, repo, path: file });
     if (!baseContent) {
         return;
     } //  If Source has no contents then return
@@ -119,11 +119,7 @@ const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(voi
     //  Get txt file's SHA if it exists
     let sha;
     try {
-        const { data: { sha: SHA } } = yield octokit.repos.getContent({
-            owner: github.context.repo.owner,
-            repo: github.context.repo.repo,
-            path: filePath
-        });
+        const { data: { sha: SHA } } = yield octokit.repos.getContent({ owner, repo, path: filePath });
         sha = SHA;
     }
     catch (err) {
@@ -137,7 +133,7 @@ const markdownConverter = (file, outDir, core, octokit, github) => __awaiter(voi
         path: filePath,
         branch,
         sha,
-        message: 'Update Steam Workshop BB Content',
+        message,
         content: js_base64_1.Base64.encode(results)
     });
 });
