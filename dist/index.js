@@ -56,25 +56,6 @@ markdownConverter_1.default(file, core, octokit, github)
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -89,7 +70,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 //  Library
-const path = __importStar(__nccwpck_require__(622));
 const js_base64_1 = __nccwpck_require__(925);
 const parser_1 = __importDefault(__nccwpck_require__(358));
 //  =======================
@@ -100,11 +80,11 @@ const markdownConverter = (file, core, octokit, github) => __awaiter(void 0, voi
     //  Repo name and owner
     const { owner, repo } = github.context.repo;
     //  Get input parameters
-    const outDir = core.getInput('outDir');
+    const target = core.getInput('target');
     const message = core.getInput('commitMessage');
     //  Get default branch
     const { data: { default_branch: branch } } = yield octokit.request(`GET /repos/${owner}/${repo}`);
-    const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt'); //  Output File Directory
+    const path = target.replace(/\.(\w+)/g, '.txt'); //  Output File Directory
     //  Get contents of Source File
     const { data: { content: baseContent } } = yield octokit.repos.getContent({ owner, repo, path: file });
     if (!baseContent) {
@@ -119,18 +99,18 @@ const markdownConverter = (file, core, octokit, github) => __awaiter(void 0, voi
     //  Get txt file's SHA if it exists
     let sha;
     try {
-        const { data: { sha: SHA } } = yield octokit.repos.getContent({ owner, repo, path: filePath });
+        const { data: { sha: SHA } } = yield octokit.repos.getContent({ owner, repo, path });
         sha = SHA;
     }
     catch (err) {
         sha = undefined;
     }
     //  Create/Update file contents
-    core.info(`Updating ${filePath}`);
+    core.info(`Updating ${path}`);
     yield octokit.repos.createOrUpdateFileContents({
         owner,
         repo,
-        path: filePath,
+        path,
         branch,
         sha,
         message,

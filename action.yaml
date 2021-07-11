@@ -13,13 +13,13 @@ description: GitHub Action to convert markdown files to steam bb code
 
 inputs:
   file:
-    description: "The file to convert"
+    description: "The markdown file to convert"
     default: "README.md"
     required: true
 
-  outDir:
+  target:
     description: "The target directory"
-    default: "."
+    default: "README.txt"
     required: true
 
   commitMessage:

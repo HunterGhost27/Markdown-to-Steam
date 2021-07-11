@@ -1,5 +1,4 @@
 //  Library
-import * as path from 'path'
 import { Base64 } from 'js-base64'
 import Parser from './parser'
 
@@ -18,14 +17,14 @@ const markdownConverter = async (file: string, core: core, octokit: octokit, git
     const { owner, repo } = github.context.repo
 
     //  Get input parameters
-    const outDir = core.getInput('outDir')
+    const target = core.getInput('target')
     const message = core.getInput('commitMessage')
 
     //  Get default branch
     const { data: { default_branch: branch } } = await octokit.request(`GET /repos/${owner}/${repo}`) as Endpoints['GET /repos/{owner}/{repo}']['response']
 
 
-    const filePath = path.join(outDir, file).replace(/\.(\w+)/g, '.txt')    //  Output File Directory
+    const path = target.replace(/\.(\w+)/g, '.txt')    //  Output File Directory
 
     //  Get contents of Source File
     const { data: { content: baseContent } } = await octokit.repos.getContent({ owner, repo, path: file }) as githubContent
@@ -40,18 +39,18 @@ const markdownConverter = async (file: string, core: core, octokit: octokit, git
     //  Get txt file's SHA if it exists
     let sha
     try {
-        const { data: { sha: SHA } } = await octokit.repos.getContent({ owner, repo, path: filePath }) as githubContent
+        const { data: { sha: SHA } } = await octokit.repos.getContent({ owner, repo, path }) as githubContent
         sha = SHA
     } catch (err) {
         sha = undefined
     }
 
     //  Create/Update file contents
-    core.info(`Updating ${filePath}`)
+    core.info(`Updating ${path}`)
     await octokit.repos.createOrUpdateFileContents({
         owner,
         repo,
-        path: filePath,
+        path,
         branch,
         sha,
         message,
