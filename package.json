@@ -1,7 +1,7 @@
 {
-  "name": "gh-action-markdown-to-steam-bb",
+  "name": "@shresht7/md-2-steambb",
   "version": "1.0.0",
-  "description": "GitHub Action to convert markdown files into Steam BB code",
+  "description": "GitHub Action to convert markdown files into Steam bb-code",
   "main": "index.js",
   "scripts": {
     "tsc": "tsc",

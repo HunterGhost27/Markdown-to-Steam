@@ -58,7 +58,7 @@ jobs:
           file: "README.md"
           
           # Target directory
-          outDir: "."
+          target: "README.txt"
 
           # Commit Message
           commitMessage: "Update Steam BB-Content"
@@ -68,6 +68,7 @@ jobs:
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to make use of the GitHub API
+
 ```
 
 ## Permissions
